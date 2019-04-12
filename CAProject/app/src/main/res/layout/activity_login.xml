@@ -60,11 +60,12 @@
 
         <Button
             android:id="@+id/btnSubmit"
-            android:layout_width="match_parent"
+            android:layout_width="100sp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="60dp"
             android:layout_marginTop="15dp"
             android:layout_marginRight="60dp"
+            android:layout_gravity="center"
             android:background="@color/colorPrimary"
             android:text="Login"
             android:textColor="@color/colorWhite" />

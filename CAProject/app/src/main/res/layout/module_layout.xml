@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -7,11 +8,11 @@
     android:layout_marginRight="20dp"
     android:layout_marginLeft="20dp"
     android:layout_marginBottom="15dp"
-    android:layout_marginTop="10dp"
+    android:layout_marginTop="15dp"
     card_view:cardElevation="1dp"
     card_view:contentPadding="10dp"
     card_view:cardCornerRadius="3dp"
-    card_view:cardBackgroundColor="@color/LightGreen"
+    card_view:cardBackgroundColor="@color/colorLightGray"
     >
 
    <LinearLayout
@@ -69,4 +70,5 @@
    </LinearLayout>
 
 </android.support.v7.widget.CardView>
+
 
