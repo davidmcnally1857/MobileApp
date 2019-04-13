@@ -35,7 +35,8 @@
                 android:layout_height="40dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:text="UserId" />
+                android:text="ehtisham.yasin@dbs.ie"
+                 />
         </LinearLayout>
 
         <LinearLayout
@@ -55,7 +56,8 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:inputType="textPassword"
-                android:text="Password" />
+                android:text="testpass"
+                 />
         </LinearLayout>
 
         <Button
