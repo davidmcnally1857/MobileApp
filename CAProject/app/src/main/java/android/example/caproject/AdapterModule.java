@@ -20,6 +20,7 @@ import java.util.Map;
 public class AdapterModule extends RecyclerView.Adapter<AdapterModule.ViewHolder> {
 private List<Object> modules;
     public class ViewHolder extends RecyclerView.ViewHolder {
+        public TextView moduleId;
         public TextView nameOfModule;
         public TextView nameOfCourse;
         public TextView lecturer;
@@ -60,6 +61,8 @@ private List<Object> modules;
             viewHolder.end.setText(module.get("To").toString());
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
+
+
 
    }
 

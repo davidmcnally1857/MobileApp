@@ -13,23 +13,37 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
+
+
+    private String userId;
+    TextView name;
+    public static RequestQueue queue;
+    Button button;
+
+
 
 
     @Override
@@ -37,10 +51,27 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        name = (TextView)findViewById(R.id.name);
+        Intent intent = getIntent();
+        name.setText(intent.getStringExtra("Name"));
+        userId = intent.getStringExtra("UserID");
 
 
-        if (Utils.queue == null) {
-          Utils.queue = Volley.newRequestQueue(getApplicationContext());
+        button = (Button) findViewById(R.id.btnChange);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, ModuleActivity.class);
+                startActivity(intent);
+            }
+        });
+
+
+
+
+
+        if (MainActivity.queue == null) {
+          MainActivity.queue = Volley.newRequestQueue(getApplicationContext());
         }
         String url = getResources().getString(R.string.url_api) + "/Module/GetModulesForUser";
 
@@ -49,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         try {
-                            Map responseApi = Utils.toMap(new JSONObject(response));
+                            Map responseApi = MainActivity.toMap(new JSONObject(response));
                             if (responseApi.get("status").toString().equals("success")) {
                                 List<Object> modules = (ArrayList)responseApi.get("modules");
                                 RecyclerView recyclerView = (RecyclerView)findViewById(R.id.recyclerview);
@@ -74,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("User_ID", "1");
+                params.put("User_ID", userId);
                 params.put("ForApp", "true");
                 return params;
             }
@@ -84,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                Utils.queue.add(stringRequest);
+                MainActivity.queue.add(stringRequest);
             }
         }, 200);
     }
@@ -96,7 +127,45 @@ public class MainActivity extends AppCompatActivity {
          return true;
     }
 
+    public static Map<String, Object> toMap(JSONObject object) throws JSONException {
 
+        Map<String, Object> map = new HashMap<String, Object>();
+        Iterator<String> keysIterator = object.keys();
+        while (keysIterator.hasNext()) {
+            String key = keysIterator.next();
+            Object objectValue = object.get(key);
+            if (objectValue instanceof JSONArray) {
+                objectValue = toList((JSONArray) objectValue);
+
+            } else if (objectValue instanceof JSONObject) {
+                objectValue = toMap((JSONObject) objectValue);
+            }
+            map.put(key, objectValue);
+        }
+
+        return map;
     }
+
+    public static List<Object> toList(JSONArray array) {
+        List<Object> list = new ArrayList<Object>();
+        try {
+            for (int i = 0; i < array.length(); i++) {
+                Object objectValue = array.get(i);
+                if (objectValue instanceof JSONArray) {
+                    objectValue = toList((JSONArray) objectValue);
+                } else if (objectValue instanceof JSONObject) {
+                    objectValue = toMap((JSONObject) objectValue);
+                }
+                list.add(objectValue);
+            }
+        } catch (Exception ex) {
+            Log.e("Exception", ex.getMessage());
+        }
+        return list;
+    }
+
+
+
+}
 
 
