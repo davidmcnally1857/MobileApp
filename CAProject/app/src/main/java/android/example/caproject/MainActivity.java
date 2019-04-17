@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,16 +36,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AdapterModule.ItemClickListener {
 
 
     private String userId;
     TextView name;
     public static RequestQueue queue;
-    Button button;
-
-
-
+    Button select;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,10 +53,9 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = getIntent();
         name.setText(intent.getStringExtra("Name"));
         userId = intent.getStringExtra("UserID");
+        select = (Button) findViewById(R.id.buttonSelect);
 
-
-        button = (Button) findViewById(R.id.btnChange);
-        button.setOnClickListener(new View.OnClickListener() {
+        select.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, ModuleActivity.class);
@@ -67,10 +64,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
-
-
-        if (MainActivity.queue == null) {
+          if (MainActivity.queue == null) {
           MainActivity.queue = Volley.newRequestQueue(getApplicationContext());
         }
         String url = getResources().getString(R.string.url_api) + "/Module/GetModulesForUser";
@@ -166,6 +160,14 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+
+    @Override
+    public void onListClick(int position) {
+
+        Intent intent = new Intent(MainActivity.this, ModuleActivity.class);
+        startActivity(intent);
+
+    }
 }
 
 

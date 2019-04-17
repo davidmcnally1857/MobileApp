@@ -25,7 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class ModuleActivity extends AppCompatActivity {
+public class ModuleActivity extends AppCompatActivity  {
 
     public static RequestQueue queue;
 
@@ -47,9 +47,9 @@ public class ModuleActivity extends AppCompatActivity {
                         try{
                             Map apiResponse = ModuleActivity.toMap(new JSONObject(response));
                              if(apiResponse.get("status").toString().equals("success")){
-                                 Log.v("topics", apiResponse.get("topics").toString());
-                                 List<Object> modules = (ArrayList)apiResponse.get("modules");
-                                 RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
+                                 List<Object> modules = (ArrayList)apiResponse.get("topics");
+                                 List<Object> subtopics = (ArrayList)apiResponse.get("subTopics");
+                                 RecyclerView recyclerView = (RecyclerView) findViewById(R.id.detail_view);
                                  RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
                                  recyclerView.setLayoutManager(layoutManager);
                                  RecyclerView.Adapter mAdapter = new AdapterModuleContent(modules);
@@ -129,5 +129,5 @@ public class ModuleActivity extends AppCompatActivity {
         return list;
     }
 
-}
+   }
 

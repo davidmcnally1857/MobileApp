@@ -7,8 +7,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.android.volley.Response;
 
 import org.w3c.dom.Text;
 
@@ -19,7 +22,9 @@ import java.util.Map;
 
 public class AdapterModule extends RecyclerView.Adapter<AdapterModule.ViewHolder> {
 private List<Object> modules;
-    public class ViewHolder extends RecyclerView.ViewHolder {
+private ItemClickListener mItemClickListener;
+
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView moduleId;
         public TextView nameOfModule;
         public TextView nameOfCourse;
@@ -28,8 +33,9 @@ private List<Object> modules;
         public TextView end;
         public View layout;
         public ImageView avatar;
+        ItemClickListener itemClickListener;
 
-        public ViewHolder(View v) {
+        public ViewHolder(View v, ItemClickListener itemClickListener) {
             super(v);
             layout = v;
             nameOfModule = (TextView) v.findViewById(R.id.nameOfModule);
@@ -37,19 +43,30 @@ private List<Object> modules;
             lecturer = (TextView) v.findViewById(R.id.lecturer);
             start = (TextView) v.findViewById(R.id.start);
             end = (TextView) v.findViewById(R.id.end);
+            this.itemClickListener = itemClickListener;
+            v.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            itemClickListener.onListClick(getAdapterPosition());
+
         }
     }
+
+        public AdapterModule(List<Object> dataset) {
+            modules = dataset;
+
+        }
         @Override
         public AdapterModule.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
             LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
             View moduleView = inflater.inflate(R.layout.module_layout, viewGroup, false);
-            ViewHolder module = new ViewHolder(moduleView);
+            ViewHolder module = new ViewHolder(moduleView, mItemClickListener);
             return module;
         }
 
-        public AdapterModule(List<Object> dataset) {
-         modules = dataset;
-        }
+
 
         @Override
         public void onBindViewHolder(ViewHolder viewHolder, int i) {
@@ -66,6 +83,9 @@ private List<Object> modules;
 
    }
 
+      public interface ItemClickListener {
+        void onListClick(int position);
+    }
 
 
         @Override
