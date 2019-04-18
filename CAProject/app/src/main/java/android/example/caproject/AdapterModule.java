@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.Map;
 
 public class AdapterModule extends RecyclerView.Adapter<AdapterModule.ViewHolder> {
-private List<Object> modules;
-private ItemClickListener mItemClickListener;
+    private List<Object> modules;
+    private ItemClickListener mItemClickListener;
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView moduleId;
@@ -35,7 +35,7 @@ private ItemClickListener mItemClickListener;
         public ImageView avatar;
         ItemClickListener itemClickListener;
 
-        public ViewHolder(View v, ItemClickListener itemClickListener) {
+        public ViewHolder(View v) {
             super(v);
             layout = v;
             nameOfModule = (TextView) v.findViewById(R.id.nameOfModule);
@@ -43,49 +43,62 @@ private ItemClickListener mItemClickListener;
             lecturer = (TextView) v.findViewById(R.id.lecturer);
             start = (TextView) v.findViewById(R.id.start);
             end = (TextView) v.findViewById(R.id.end);
-            this.itemClickListener = itemClickListener;
-            v.setOnClickListener(this);
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mItemClickListener != null) {
+                        int position = getAdapterPosition();
+                        if(position!= RecyclerView.NO_POSITION ){
+                            mItemClickListener.onListClick(position);
+                        }
+                    }
+                }
+            });
         }
 
         @Override
         public void onClick(View v) {
-            itemClickListener.onListClick(getAdapterPosition());
 
         }
     }
 
-        public AdapterModule(List<Object> dataset) {
-            modules = dataset;
+    public AdapterModule(List<Object> dataset) {
+        modules = dataset;
 
-        }
-        @Override
-        public AdapterModule.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-            LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
-            View moduleView = inflater.inflate(R.layout.module_layout, viewGroup, false);
-            ViewHolder module = new ViewHolder(moduleView, mItemClickListener);
-            return module;
-        }
+    }
 
-
-
-        @Override
-        public void onBindViewHolder(ViewHolder viewHolder, int i) {
-          final Map module = (HashMap) modules.get(i);
-            viewHolder.nameOfModule.setText(module.get("Module_Code") +"-" + module.get("Module_Name"));
-            viewHolder.nameOfCourse.setText(module.get("Course") + "-" + module.get("Course_Intake"));
-            viewHolder.lecturer.setText(module.get("Lecturer").toString());
-            viewHolder.start.setText(module.get("From").toString());
-            viewHolder.end.setText(module.get("To").toString());
-            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-            StrictMode.setThreadPolicy(policy);
+    @Override
+    public AdapterModule.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+        LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
+        View moduleView = inflater.inflate(R.layout.module_layout, viewGroup, false);
+        ViewHolder module = new ViewHolder(moduleView);
+        return module;
+    }
 
 
+    @Override
+    public void onBindViewHolder(ViewHolder viewHolder, int i) {
+        final Map module = (HashMap) modules.get(i);
+        viewHolder.nameOfModule.setText(module.get("Module_Code") + "-" + module.get("Module_Name"));
+        viewHolder.nameOfCourse.setText(module.get("Course") + "-" + module.get("Course_Intake"));
+        viewHolder.lecturer.setText(module.get("Lecturer").toString());
+        viewHolder.start.setText(module.get("From").toString());
+        viewHolder.end.setText(module.get("To").toString());
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
 
-   }
 
-      public interface ItemClickListener {
+    }
+
+    public interface ItemClickListener {
         void onListClick(int position);
     }
+
+    public void setmItemClickListener(ItemClickListener listener) {
+
+         mItemClickListener = listener;
+    }
+
 
 
         @Override

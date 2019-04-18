@@ -6,10 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".ModuleActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="ModuleActivity" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/detail_view"

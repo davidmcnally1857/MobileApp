@@ -8,7 +8,8 @@
       android:icon="@drawable/refreshbutton"
       android:title="Refresh"/>
     <item
-        android:id="@+id/action_settings"
-        android:title="Settings"></item>
+        android:id="@+id/action_logout"
+        android:title="Logout"
+       />
 
 </menu>

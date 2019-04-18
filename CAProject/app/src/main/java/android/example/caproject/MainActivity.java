@@ -1,22 +1,20 @@
 package android.example.caproject;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -38,11 +36,11 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements AdapterModule.ItemClickListener {
 
-
+    InternetReciever internetReciever = new InternetReciever();
     private String userId;
     TextView name;
     public static RequestQueue queue;
-    Button select;
+    private AppDatabase database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,15 +51,7 @@ public class MainActivity extends AppCompatActivity implements AdapterModule.Ite
         Intent intent = getIntent();
         name.setText(intent.getStringExtra("Name"));
         userId = intent.getStringExtra("UserID");
-        select = (Button) findViewById(R.id.buttonSelect);
 
-        select.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, ModuleActivity.class);
-                startActivity(intent);
-            }
-        });
 
 
           if (MainActivity.queue == null) {
@@ -82,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements AdapterModule.Ite
                                 recyclerView.setLayoutManager(layoutManager);
                                 RecyclerView.Adapter mAdapter = new AdapterModule(modules);
                                 recyclerView.setAdapter(mAdapter);
+                                ((AdapterModule) mAdapter).setmItemClickListener(MainActivity.this);
                             } else {
                                 Log.v("error", responseApi.get("modules").toString());
                             }
@@ -117,8 +108,22 @@ public class MainActivity extends AppCompatActivity implements AdapterModule.Ite
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.refreshbutton, menu);
+        inflater.inflate(R.menu.logout, menu);
          return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        database = AppDatabase.getDatabase(getApplicationContext());
+        if(database.userDAO().getAllUsers().isEmpty()) {
+            database.userDAO().removeAllUsers();
+
+
+        }
+
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        MainActivity.this.startActivity(intent);
+        return true;
     }
 
     public static Map<String, Object> toMap(JSONObject object) throws JSONException {
@@ -168,6 +173,20 @@ public class MainActivity extends AppCompatActivity implements AdapterModule.Ite
         startActivity(intent);
 
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(internetReciever, filter);
+
+    }
+
+    protected void onStop() {
+        super.onStop();
+    }
+
 }
 
 
