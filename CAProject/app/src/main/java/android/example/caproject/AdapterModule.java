@@ -23,9 +23,11 @@ import java.util.Map;
 public class AdapterModule extends RecyclerView.Adapter<AdapterModule.ViewHolder> {
     private List<Object> modules;
     private ItemClickListener mItemClickListener;
+    public String moduleId;
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public TextView moduleId;
+
+
         public TextView nameOfModule;
         public TextView nameOfCourse;
         public TextView lecturer;
@@ -79,6 +81,7 @@ public class AdapterModule extends RecyclerView.Adapter<AdapterModule.ViewHolder
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int i) {
         final Map module = (HashMap) modules.get(i);
+        this.moduleId = module.get("Module_ID").toString();
         viewHolder.nameOfModule.setText(module.get("Module_Code") + "-" + module.get("Module_Name"));
         viewHolder.nameOfCourse.setText(module.get("Course") + "-" + module.get("Course_Intake"));
         viewHolder.lecturer.setText(module.get("Lecturer").toString());
@@ -86,6 +89,8 @@ public class AdapterModule extends RecyclerView.Adapter<AdapterModule.ViewHolder
         viewHolder.end.setText(module.get("To").toString());
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
+
+
 
 
     }
@@ -98,6 +103,12 @@ public class AdapterModule extends RecyclerView.Adapter<AdapterModule.ViewHolder
 
          mItemClickListener = listener;
     }
+
+    public String getModuleId(){
+
+        return this.moduleId;
+    }
+
 
 
 

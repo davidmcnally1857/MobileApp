@@ -1,6 +1,7 @@
 package android.example.caproject;
 
 
+import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -28,11 +29,14 @@ import java.util.Map;
 public class ModuleActivity extends AppCompatActivity  {
 
     public static RequestQueue queue;
+    String module_ID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_module);
+        Intent intent = getIntent();
+         module_ID =  intent.getStringExtra("ID");
 
         if (ModuleActivity.queue == null) {
             ModuleActivity.queue = Volley.newRequestQueue(getApplicationContext());
@@ -48,7 +52,7 @@ public class ModuleActivity extends AppCompatActivity  {
                             Map apiResponse = ModuleActivity.toMap(new JSONObject(response));
                              if(apiResponse.get("status").toString().equals("success")){
                                  List<Object> modules = (ArrayList)apiResponse.get("topics");
-                                 List<Object> subtopics = (ArrayList)apiResponse.get("subTopics");
+                                 Log.v("topics", apiResponse.get("topics").toString());
                                  RecyclerView recyclerView = (RecyclerView) findViewById(R.id.detail_view);
                                  RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
                                  recyclerView.setLayoutManager(layoutManager);

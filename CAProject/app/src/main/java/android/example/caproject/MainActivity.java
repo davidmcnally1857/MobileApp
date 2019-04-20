@@ -36,11 +36,13 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements AdapterModule.ItemClickListener {
 
+
     InternetReciever internetReciever = new InternetReciever();
     private String userId;
     TextView name;
     public static RequestQueue queue;
     private AppDatabase database;
+    User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +53,8 @@ public class MainActivity extends AppCompatActivity implements AdapterModule.Ite
         Intent intent = getIntent();
         name.setText(intent.getStringExtra("Name"));
         userId = intent.getStringExtra("UserID");
+        database = AppDatabase.getDatabase((getApplicationContext()));
+        user = database.userDAO().getUser();
 
 
 
@@ -70,9 +74,12 @@ public class MainActivity extends AppCompatActivity implements AdapterModule.Ite
                                 RecyclerView recyclerView = (RecyclerView)findViewById(R.id.recyclerview);
                                 RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
                                 recyclerView.setLayoutManager(layoutManager);
-                                RecyclerView.Adapter mAdapter = new AdapterModule(modules);
+                                AdapterModule  mAdapter = new AdapterModule(modules);
                                 recyclerView.setAdapter(mAdapter);
                                 ((AdapterModule) mAdapter).setmItemClickListener(MainActivity.this);
+
+
+
                             } else {
                                 Log.v("error", responseApi.get("modules").toString());
                             }
@@ -90,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements AdapterModule.Ite
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("User_ID", userId);
+                params.put("User_ID", Integer.toString(user.User_ID));
                 params.put("ForApp", "true");
                 return params;
             }
@@ -121,7 +128,9 @@ public class MainActivity extends AppCompatActivity implements AdapterModule.Ite
 
         }
 
+
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        intent.putExtra("ID", "1");
         MainActivity.this.startActivity(intent);
         return true;
     }
