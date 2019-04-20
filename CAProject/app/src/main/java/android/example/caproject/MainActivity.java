@@ -122,16 +122,23 @@ public class MainActivity extends AppCompatActivity implements AdapterModule.Ite
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         database = AppDatabase.getDatabase(getApplicationContext());
-        if(database.userDAO().getAllUsers().isEmpty()) {
+        if(!(database.userDAO().getAllUsers().isEmpty())) {
             database.userDAO().removeAllUsers();
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                    MainActivity.this.startActivity(intent);
+                    MainActivity.this.finish();
+                }
+            },1000);
 
 
         }
 
 
-        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-        intent.putExtra("ID", "1");
-        MainActivity.this.startActivity(intent);
+
         return true;
     }
 

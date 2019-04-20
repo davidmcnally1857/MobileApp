@@ -30,11 +30,11 @@ import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
 
-    EditText email;
-    EditText password;
+    EditText Email;
+    EditText Password;
     String name;
     Button submit;
-    User user;
+
     public static RequestQueue queue;
     private AppDatabase database;
 
@@ -43,8 +43,8 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        email = (EditText) findViewById(R.id.enterEmail);
-        password = (EditText) findViewById(R.id.enterPassword);
+        Email = (EditText) findViewById(R.id.enterEmail);
+        Password = (EditText) findViewById(R.id.enterPassword);
 
 
         findViewById(R.id.btnSubmit).setOnClickListener(new View.OnClickListener() {
@@ -80,7 +80,7 @@ public class LoginActivity extends AppCompatActivity {
                                         String lastlogin = userLogin.get("LastLogin").toString();
                                         String active = userLogin.get("Active").toString();
 
-                                        user = new User(Integer.parseInt(id), name, email, username, password, userType, avatar, created, lastlogin,Integer.parseInt(active));
+                                       User user = new User(Integer.parseInt(id), name, email, username, password, userType, avatar, created, lastlogin,Integer.parseInt(active));
 
                                              database.userDAO().addUser(user);
 
@@ -88,6 +88,7 @@ public class LoginActivity extends AppCompatActivity {
                                         intent.putExtra("Name",  name);
                                         intent.putExtra("UserID", id );
                                         startActivity(intent);
+                                        finish();
 
                                     } else {
                                         Log.v("error", loginResponse.get("message").toString());
@@ -106,8 +107,8 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     protected Map<String, String> getParams() {
                         Map<String, String> params = new HashMap<String, String>();
-                        params.put("email", email.getText().toString());
-                        params.put("password", password.getText().toString());
+                        params.put("email", Email.getText().toString());
+                        params.put("password", Password.getText().toString());
                         return params;
                     }
 
