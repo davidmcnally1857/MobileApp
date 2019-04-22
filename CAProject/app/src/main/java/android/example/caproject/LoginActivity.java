@@ -85,8 +85,6 @@ public class LoginActivity extends AppCompatActivity {
                                              database.userDAO().addUser(user);
 
                                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                        intent.putExtra("Name",  name);
-                                        intent.putExtra("UserID", id );
                                         startActivity(intent);
                                         finish();
 

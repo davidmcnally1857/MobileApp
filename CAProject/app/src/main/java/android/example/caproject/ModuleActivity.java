@@ -29,14 +29,19 @@ import java.util.Map;
 public class ModuleActivity extends AppCompatActivity  {
 
     public static RequestQueue queue;
-    String module_ID;
+    private AppDatabase database;
+    Module module;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_module);
         Intent intent = getIntent();
-         module_ID =  intent.getStringExtra("ID");
+        final List<Object> modules;
+        final Map subtopic = new HashMap();
+        database = AppDatabase.getDatabase(getApplicationContext());
+        module = database.moduleDAO().getModule();
+
 
         if (ModuleActivity.queue == null) {
             ModuleActivity.queue = Volley.newRequestQueue(getApplicationContext());
@@ -52,12 +57,12 @@ public class ModuleActivity extends AppCompatActivity  {
                             Map apiResponse = ModuleActivity.toMap(new JSONObject(response));
                              if(apiResponse.get("status").toString().equals("success")){
                                  List<Object> modules = (ArrayList)apiResponse.get("topics");
-                                 Log.v("topics", apiResponse.get("topics").toString());
                                  RecyclerView recyclerView = (RecyclerView) findViewById(R.id.detail_view);
                                  RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
                                  recyclerView.setLayoutManager(layoutManager);
                                  RecyclerView.Adapter mAdapter = new AdapterModuleContent(modules);
                                  recyclerView.setAdapter(mAdapter);
+
                              } else {
                                  Log.v("error", apiResponse.get("message").toString());
                              }
@@ -77,7 +82,7 @@ public class ModuleActivity extends AppCompatActivity  {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("Module_ID","1");
+                params.put("Module_ID", Integer.toString(module.Module_ID));
                 params.put("ForApp", "true");
                 return params;
             }

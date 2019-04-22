@@ -21,9 +21,9 @@ import java.util.List;
 import java.util.Map;
 
 public class AdapterModule extends RecyclerView.Adapter<AdapterModule.ViewHolder> {
-    private List<Object> modules;
+    private List<Module> modules;
     private ItemClickListener mItemClickListener;
-    public String moduleId;
+
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
@@ -64,7 +64,7 @@ public class AdapterModule extends RecyclerView.Adapter<AdapterModule.ViewHolder
         }
     }
 
-    public AdapterModule(List<Object> dataset) {
+    public AdapterModule(List<Module> dataset) {
         modules = dataset;
 
     }
@@ -80,18 +80,18 @@ public class AdapterModule extends RecyclerView.Adapter<AdapterModule.ViewHolder
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int i) {
-        final Map module = (HashMap) modules.get(i);
-        this.moduleId = module.get("Module_ID").toString();
-        viewHolder.nameOfModule.setText(module.get("Module_Code") + "-" + module.get("Module_Name"));
-        viewHolder.nameOfCourse.setText(module.get("Course") + "-" + module.get("Course_Intake"));
-        viewHolder.lecturer.setText(module.get("Lecturer").toString());
-        viewHolder.start.setText(module.get("From").toString());
-        viewHolder.end.setText(module.get("To").toString());
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
+
+           Module module = modules.get(i);
+
+            viewHolder.nameOfModule.setText(module.Module_Name);
+            viewHolder.nameOfCourse.setText(module.Course);
+            viewHolder.lecturer.setText(module.Lecturer);
+            viewHolder.start.setText(module.Start);
+            viewHolder.end.setText(module.End);
 
 
-
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
 
     }
 
@@ -103,13 +103,6 @@ public class AdapterModule extends RecyclerView.Adapter<AdapterModule.ViewHolder
 
          mItemClickListener = listener;
     }
-
-    public String getModuleId(){
-
-        return this.moduleId;
-    }
-
-
 
 
         @Override
