@@ -22,6 +22,7 @@ import java.util.Map;
 
 public class AdapterModule extends RecyclerView.Adapter<AdapterModule.ViewHolder> {
     private List<Module> modules;
+
     private ItemClickListener mItemClickListener;
 
 
@@ -67,6 +68,7 @@ public class AdapterModule extends RecyclerView.Adapter<AdapterModule.ViewHolder
     public AdapterModule(List<Module> dataset) {
         modules = dataset;
 
+
     }
 
     @Override
@@ -81,10 +83,10 @@ public class AdapterModule extends RecyclerView.Adapter<AdapterModule.ViewHolder
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int i) {
 
-           Module module = modules.get(i);
+            Module module = modules.get(i);
 
-            viewHolder.nameOfModule.setText(module.Module_Name);
-            viewHolder.nameOfCourse.setText(module.Course);
+            viewHolder.nameOfModule.setText(module.Module_Code + "-" + module.Module_Name);
+            viewHolder.nameOfCourse.setText(module.Course + "-" + module.Course_Intake);
             viewHolder.lecturer.setText(module.Lecturer);
             viewHolder.start.setText(module.Start);
             viewHolder.end.setText(module.End);
@@ -92,6 +94,7 @@ public class AdapterModule extends RecyclerView.Adapter<AdapterModule.ViewHolder
 
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
+
 
     }
 

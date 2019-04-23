@@ -28,4 +28,7 @@ public interface ModuleDAO {
     @Update(onConflict = OnConflictStrategy.REPLACE)
     void updateModule(Module module);
 
+    @Query("DELETE FROM Module")
+    void removeAllModules();
+
 }

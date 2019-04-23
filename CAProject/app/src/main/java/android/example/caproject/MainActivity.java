@@ -1,5 +1,6 @@
 package android.example.caproject;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements AdapterModule.Ite
     InternetReciever internetReciever = new InternetReciever();
     private String userId;
     TextView name;
+    public static Context applicationContext;
     public static RequestQueue queue;
     private AppDatabase database;
     User user;
@@ -63,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements AdapterModule.Ite
         user = database.userDAO().getUser();
         name.setText(user.FullName.toString());
 
-
+         applicationContext = getApplicationContext();
 
           if (MainActivity.queue == null) {
           MainActivity.queue = Volley.newRequestQueue(getApplicationContext());
@@ -160,8 +162,10 @@ public class MainActivity extends AppCompatActivity implements AdapterModule.Ite
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         database = AppDatabase.getDatabase(getApplicationContext());
-        if(!(database.userDAO().getAllUsers().isEmpty())) {
+        if(!(database.userDAO().getAllUsers().isEmpty()) && !(database.moduleDAO().getAllModules().isEmpty())) {
             database.userDAO().removeAllUsers();
+            database.moduleDAO().removeAllModules();
+        }
 
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -173,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements AdapterModule.Ite
             },1000);
 
 
-        }
+
 
 
 
