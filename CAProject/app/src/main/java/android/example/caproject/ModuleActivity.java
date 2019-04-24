@@ -56,11 +56,56 @@ public class ModuleActivity extends AppCompatActivity  {
                         try{
                             Map apiResponse = ModuleActivity.toMap(new JSONObject(response));
                              if(apiResponse.get("status").toString().equals("success")){
-                                 List<Object> modules = (ArrayList)apiResponse.get("topics");
+                                 List<HashMap> modules = (ArrayList)apiResponse.get("topics");
+
+
+
+                                 database = AppDatabase.getDatabase(getApplicationContext());
+
+
+                                 for (int i = 0; i < modules.size(); i++) {
+                                     Map module = modules.get(i);
+
+                                     String topicId = module.get("Topic_ID").toString();
+                                     String topicName = module.get("Topic_Name").toString();
+                                     String subTopic = module.get("SubTopic").toString();
+                                     String parentTopic = module.get("ParentTopic").toString();
+                                     String topicDescription = module.get("TopicDescription").toString();
+                                     String moduleId = module.get("Module_ID").toString();
+                                     List<HashMap> subTopics = (ArrayList) module.get("subTopics");
+                                     for(int j = 0; j < subTopics.size(); j ++){
+                                         Map subtopic = subTopics.get(j);
+                                         String subTopicId = subtopic.get("Topic_ID").toString();
+                                         String subTopicName = subtopic.get("Topic_Name").toString();
+                                         String subTopic1 = subtopic.get("SubTopic").toString();
+                                         String parentTopic1 = subtopic.get("ParentTopic").toString();
+                                         String topicDescription1 = subtopic.get("TopicDescription").toString();
+                                         String moduleId1 = subtopic.get("Module_ID").toString();
+
+                                         Topics sTopic = new Topics(Integer.parseInt(subTopicId), subTopicName, Integer.parseInt(subTopic1), Integer.parseInt(parentTopic1), topicDescription1,
+                                                 Integer.parseInt(moduleId1));
+                                         if(subTopic == "null"){
+                                             subTopic = "0";
+                                         }
+                                         database.topicDAO().addTopic(sTopic);
+                                     }
+                                     if(parentTopic == "null"){
+                                         parentTopic = "0";
+                                     }
+
+
+                                     Topics topic = new Topics(Integer.parseInt(topicId), topicName, Integer.parseInt(subTopic), Integer.parseInt(parentTopic), topicDescription,
+                                             Integer.parseInt(moduleId));
+
+                                     database.topicDAO().addTopic(topic);
+                                 }
+                                 List<Topics> topics = database.topicDAO().getAllTopicsWherParentTopicsIsZero();
+                                 List<Topics> subTopics = database.topicDAO().getAllTopicsWhereParentTopisIsNotZero();
+
                                  RecyclerView recyclerView = (RecyclerView) findViewById(R.id.detail_view);
                                  RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
                                  recyclerView.setLayoutManager(layoutManager);
-                                 RecyclerView.Adapter mAdapter = new AdapterModuleContent(modules);
+                                 RecyclerView.Adapter mAdapter = new AdapterModuleContent(topics, subTopics);
                                  recyclerView.setAdapter(mAdapter);
 
                              } else {

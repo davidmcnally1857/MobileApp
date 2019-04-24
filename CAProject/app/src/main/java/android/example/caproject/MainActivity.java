@@ -49,6 +49,10 @@ public class MainActivity extends AppCompatActivity implements AdapterModule.Ite
     public static RequestQueue queue;
     private AppDatabase database;
     User user;
+    ConnectionCheck connectionCheck;
+
+
+
 
 
 
@@ -57,7 +61,10 @@ public class MainActivity extends AppCompatActivity implements AdapterModule.Ite
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        name = (TextView)findViewById(R.id.name);
+
+        connectionCheck = new ConnectionCheck(this);
+
+        name = (TextView) findViewById(R.id.name);
         Intent intent = getIntent();
 
 
@@ -65,92 +72,110 @@ public class MainActivity extends AppCompatActivity implements AdapterModule.Ite
         user = database.userDAO().getUser();
         name.setText(user.FullName.toString());
 
-         applicationContext = getApplicationContext();
+        applicationContext = getApplicationContext();
+         if(connectionCheck.isConnected()) {
 
-          if (MainActivity.queue == null) {
-          MainActivity.queue = Volley.newRequestQueue(getApplicationContext());
+
+             if (MainActivity.queue == null) {
+                 MainActivity.queue = Volley.newRequestQueue(getApplicationContext());
+             }
+             String url = getResources().getString(R.string.url_api) + "/Module/GetModulesForUser";
+
+             final StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                     new Response.Listener<String>() {
+                         @Override
+                         public void onResponse(String response) {
+                             try {
+
+
+                                 Map responseApi = MainActivity.toMap(new JSONObject(response));
+                                 if (responseApi.get("status").toString().equals("success")) {
+                                     List<HashMap> moduleList = (ArrayList) responseApi.get("modules");
+
+
+                                     database = AppDatabase.getDatabase(getApplicationContext());
+
+
+                                     for (int i = 0; i < moduleList.size(); i++) {
+                                         Map module = moduleList.get(i);
+
+                                         String moduleId = module.get("Module_ID").toString();
+                                         String moduleCode = module.get("Module_Code").toString();
+                                         String moduleName = module.get("Module_Name").toString();
+                                         String course = module.get("Course").toString();
+                                         String courseIntake = module.get("Course_Intake").toString();
+                                         String lecturer = module.get("Lecturer").toString();
+                                         String startDate = module.get("StartDate").toString();
+                                         String endDate = module.get("EndDate").toString();
+                                         String start = module.get("From").toString();
+                                         String end = module.get("To").toString();
+
+                                         Module moduleItem = new Module(Integer.parseInt(moduleId), moduleCode, moduleName,
+                                                 course, courseIntake, lecturer, startDate, endDate, start, end);
+                                         database.moduleDAO().addModule(moduleItem);
+                                     }
+                                    createView();
+
+
+                                 } else {
+                                     Log.v("error", responseApi.get("modules").toString());
+                                 }
+
+
+                             } catch (Exception e) {
+                                 Log.v("error", e.getMessage());
+
+                             }
+
+
+                         }
+
+                     }, new Response.ErrorListener() {
+                 @Override
+                 public void onErrorResponse(VolleyError error) {
+                     Log.v("Response", error.getMessage());
+                 }
+             }) {
+                 @Override
+                 protected Map<String, String> getParams() {
+                     Map<String, String> params = new HashMap<String, String>();
+                     params.put("User_ID", Integer.toString(user.User_ID));
+                     params.put("ForApp", "true");
+                     return params;
+                 }
+
+             };
+             Handler handler = new Handler();
+             handler.postDelayed(new Runnable() {
+                 @Override
+                 public void run() {
+                     MainActivity.queue.add(stringRequest);
+                 }
+             }, 200);
+
+         }
+         else{
+
+            createView();
+
+         }
+
         }
-        String url = getResources().getString(R.string.url_api) + "/Module/GetModulesForUser";
 
-          final StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
-                  new Response.Listener<String>() {
-                      @Override
-                      public void onResponse(String response) {
-                          try {
+        public void createView(){
+            List<Module> modules = (ArrayList) database.moduleDAO().getAllModules();
 
-
-                            Map responseApi = MainActivity.toMap(new JSONObject(response));
-                            if (responseApi.get("status").toString().equals("success")) {
-                                List<HashMap> moduleList = (ArrayList)responseApi.get("modules");
+            RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
+            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+            recyclerView.setLayoutManager(layoutManager);
+            AdapterModule mAdapter = new AdapterModule(modules);
+            recyclerView.setAdapter(mAdapter);
+            ((AdapterModule) mAdapter).setmItemClickListener(MainActivity.this);
 
 
-                            database = AppDatabase.getDatabase(getApplicationContext());
-
-                            for(int i = 0; i < moduleList.size(); i++) {
-                                Map module = moduleList.get(i);
-
-                                String moduleId = module.get("Module_ID").toString();
-                                String moduleCode = module.get("Module_Code").toString();
-                                String moduleName = module.get("Module_Name").toString();
-                                String course = module.get("Course").toString();
-                                String courseIntake = module.get("Course_Intake").toString();
-                                String lecturer = module.get("Lecturer").toString();
-                                String startDate = module.get("StartDate").toString();
-                                String endDate = module.get("EndDate").toString();
-                                String start = module.get("From").toString();
-                                String end = module.get("To").toString();
-
-                                Module moduleItem = new Module(Integer.parseInt(moduleId),moduleCode, moduleName,
-                                        course, courseIntake, lecturer, startDate, endDate, start, end);
-                                database.moduleDAO().addModule(moduleItem);
-                            }
+        }
 
 
-
-
-                                   List<Module> modules = (ArrayList) database.moduleDAO().getAllModules();
-
-                                   RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
-                                   RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
-                                   recyclerView.setLayoutManager(layoutManager);
-                                   AdapterModule mAdapter = new AdapterModule(modules);
-                                   recyclerView.setAdapter(mAdapter);
-                                   ((AdapterModule) mAdapter).setmItemClickListener(MainActivity.this);
-
-
-                            } else {
-                                Log.v("error", responseApi.get("modules").toString());
-                            }
-
-                        } catch (Exception e) {
-                              Log.v("error", e.getMessage());
-
-                          }
-                      }
-
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.v("Response", error.getMessage());
-            }
-        }) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("User_ID", Integer.toString(user.User_ID));
-                params.put("ForApp", "true");
-                return params;
-            }
-
-        };
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                MainActivity.queue.add(stringRequest);
-            }
-        }, 200);
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -162,7 +187,7 @@ public class MainActivity extends AppCompatActivity implements AdapterModule.Ite
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         database = AppDatabase.getDatabase(getApplicationContext());
-        if(!(database.userDAO().getAllUsers().isEmpty()) && !(database.moduleDAO().getAllModules().isEmpty())) {
+        if(!(database.userDAO().getAllUsers().isEmpty())) {
             database.userDAO().removeAllUsers();
             database.moduleDAO().removeAllModules();
         }

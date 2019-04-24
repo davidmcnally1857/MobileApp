@@ -25,6 +25,7 @@ public interface ModuleDAO {
     @Query("SELECT * FROM Module WHERE Module_ID = :Module_ID")
     public Module getModule(long Module_ID);
 
+
     @Update(onConflict = OnConflictStrategy.REPLACE)
     void updateModule(Module module);
 

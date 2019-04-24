@@ -15,7 +15,8 @@ import java.util.Map;
 
 public class AdapterModuleContent extends RecyclerView.Adapter<AdapterModuleContent.Viewholder> {
 
-    private List<Object> modules;
+    private List<Topics> modules;
+    private List<Topics> subdata;
 
 
 
@@ -23,6 +24,7 @@ public class AdapterModuleContent extends RecyclerView.Adapter<AdapterModuleCont
         public TextView topic_name;
         public TextView subtopic_name;
         public TextView description;
+        public TextView subtopic_description;
         public View layout;
 
 
@@ -31,6 +33,8 @@ public class AdapterModuleContent extends RecyclerView.Adapter<AdapterModuleCont
             layout = v;
             topic_name = (TextView) v.findViewById(R.id.topic_name);
             description = (TextView) v.findViewById(R.id.description_name);
+            subtopic_name = (TextView) v.findViewById(R.id.subtopic_name);
+            subtopic_description = (TextView) v.findViewById(R.id.subtopic_description);
 
 
         }
@@ -44,18 +48,22 @@ public class AdapterModuleContent extends RecyclerView.Adapter<AdapterModuleCont
             return module;
     }
 
-        public AdapterModuleContent(List<Object> dataset) {
+        public AdapterModuleContent(List<Topics> dataset, List<Topics> subdataset) {
         modules = dataset;
+        subdata = subdataset;
 
 
         }
 
         public void onBindViewHolder(AdapterModuleContent.Viewholder viewholder, int i) {
-         final Map module = (HashMap) modules.get(i);
-            viewholder.topic_name.setText(module.get("Topic_Name").toString());
-            viewholder.description.setText(module.get("TopicDescription").toString());
-            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-            StrictMode.setThreadPolicy(policy);
+
+        Topics topic = modules.get(i);
+        Topics subtopic = subdata.get(i);
+        viewholder.topic_name.setText(topic.Topic_Name);
+        viewholder.description.setText(topic.Topic_Description);
+        viewholder.subtopic_name.setText(subtopic.Topic_Name);
+        viewholder.subtopic_description.setText(subtopic.Topic_Description);
+
 
 
         }
@@ -65,6 +73,7 @@ public class AdapterModuleContent extends RecyclerView.Adapter<AdapterModuleCont
         @Override
         public int getItemCount() {
             return modules.size();
+
         }
     }
 

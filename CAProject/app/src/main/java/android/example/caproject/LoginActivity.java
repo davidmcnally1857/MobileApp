@@ -35,6 +35,7 @@ public class LoginActivity extends AppCompatActivity {
     String name;
     Button submit;
 
+
     public static RequestQueue queue;
     private AppDatabase database;
 
@@ -90,7 +91,7 @@ public class LoginActivity extends AppCompatActivity {
 
                                     } else {
                                         Log.v("error", loginResponse.get("message").toString());
-                                        Toast.makeText(LoginActivity.this, "Invalid Login", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(LoginActivity.this, loginResponse.get("message").toString(), Toast.LENGTH_SHORT).show();
                                     }
                                 } catch (Exception e) {
                                     Log.v("Error", e.getMessage());
